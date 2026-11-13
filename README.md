@@ -64,3 +64,8 @@ uv run python -m http.server -d site 8000
 ```
 
 Then open <http://localhost:8000/>.
+
+## Publish
+
+`.github/workflows/pages.yml` deploys `site/` to GitHub Pages on every push to `main` that
+touches `site/`. In the repository settings, set **Pages → Source** to **GitHub Actions** once.
