@@ -1,4 +1,9 @@
-def main() -> None:
-    from . import build
+import sys
 
-    build.run()
+
+def main() -> None:
+    from . import build, paintings
+
+    if "--paintings-only" not in sys.argv:
+        build.run()
+    paintings.run()
