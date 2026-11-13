@@ -7,7 +7,11 @@ authors = [
     { name = "Nobutake Kamiya", email = "nobuta77to99@hotmail.com" }
 ]
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "numpy>=2.5.4",
+    "pillow>=13.0.0",
+    "scikit-learn>=1.9.1",
+]
 
 [project.scripts]
 glamhack2026-photochrom = "glamhack2026_photochrom:main"
@@ -15,3 +19,8 @@ glamhack2026-photochrom = "glamhack2026_photochrom:main"
 [build-system]
 requires = ["uv_build>=0.13.8,<0.14.0"]
 build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+]
