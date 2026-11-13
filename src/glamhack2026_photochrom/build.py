@@ -12,6 +12,7 @@ from PIL import Image
 
 from .crop import crop_print
 from .dates import year_weights
+from .features import image_features
 from .palette import build_codebook, color_shares, lab_to_hex, rgb_to_lab
 
 _SAMPLES_PER_IMAGE = 500
@@ -77,15 +78,25 @@ def run(
             kept.append({**rec, "crop": [round(float(b), 4) for b in box]})
 
     codebook = build_codebook(rgb_to_lab(np.concatenate(samples)), k=k)
-    images = []
+    codebook_hex = [lab_to_hex(c) for c in codebook]
+    images, features = [], []
     for rec, px in zip(kept, pixels):
-        shares = color_shares(rgb_to_lab(px), codebook)
+        shares = [round(float(s), 3) for s in color_shares(rgb_to_lab(px), codebook)]
         rec = {key: v for key, v in rec.items() if key != "image_file"}
         rec["years"] = {str(y): w for y, w in rec["years"].items()} if rec["years"] else None
-        rec["shares"] = [round(float(s), 3) for s in shares]
-        images.append(rec)
+        images.append({**rec, "shares": shares})
+        features.append(
+            {"id": rec["id"], "title": rec["title"], "date": rec["date"], "crop": rec["crop"],
+             "codebook_shares": shares, **image_features(px)}
+        )
 
     out.parent.mkdir(parents=True, exist_ok=True)
-    data = {"codebook": [lab_to_hex(c) for c in codebook], "images": images}
-    out.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    _write_json(out, {"codebook": codebook_hex, "images": images})
+    # Research copy: every image's own palette and colour statistics, plus the shared codebook.
+    _write_json(out.parent / "features.json", {"codebook": codebook_hex, "images": features}, indent=1)
     print(f"wrote {len(images)} images, {k} colours -> {out}", file=sys.stderr)
+
+
+def _write_json(path: Path, data: dict, indent: int | None = None) -> None:
+    separators = None if indent else (",", ":")
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=indent, separators=separators), encoding="utf-8")

@@ -71,3 +71,15 @@ def test_run_writes_json_and_skips_missing_image(tmp_path, capsys):
     assert img["years"] == {"1897": 1.0}
     assert len(img["crop"]) == 4
     assert "missing" in capsys.readouterr().err
+
+
+def test_run_writes_features_json(tmp_path):
+    make_csv(tmp_path)
+    make_zip(tmp_path)
+    run(tmp_path, tmp_path / "colors.json", k=2)
+    feats = json.loads((tmp_path / "features.json").read_text())
+    assert feats["codebook"] and len(feats["images"]) == 1
+    f = feats["images"][0]
+    assert f["id"] == "991000000000000001" and f["title"] == "Title 991000000000000001"
+    assert len(f["codebook_shares"]) == 2 and len(f["crop"]) == 4
+    assert {"palette", "mean_lab", "hue_hist", "colourfulness"} <= set(f)
