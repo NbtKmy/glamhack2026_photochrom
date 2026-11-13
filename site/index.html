@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Photochrom Colours</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Photochrom Colours</h1>
+    <p class="lede">1,952 photochroms from the Zentralbibliothek Zürich. Each band shows which colours were used in a year. Click a colour layer to see the prints that use it most.</p>
+    <nav><a href="compare.html">Compare with original paintings →</a></nav>
+  </header>
+
+  <main>
+    <section class="controls">
+      <label><input type="checkbox" id="includeArt"> Include art reproductions</label>
+      <span id="status"></span>
+    </section>
+
+    <section id="bands" class="bands" aria-label="Colour bands by year"></section>
+
+    <section id="results" class="results" hidden>
+      <h2 id="resultsTitle"></h2>
+      <div id="thumbs" class="thumbs"></div>
+    </section>
+
+    <section id="detail" class="detail" hidden></section>
+  </main>
+
+  <footer class="palette-bar">
+    <div id="paletteLabel" class="palette-label"></div>
+    <div id="palette" class="palette"></div>
+  </footer>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
