@@ -26,3 +26,12 @@ def test_color_shares_sums_to_one_and_prefers_chroma():
     s = color_shares(px, cb)
     assert s.sum() == pytest.approx(1)
     assert s[1] > s[0]  # 同じ画素数なら彩度の高い色が大きい
+
+
+def test_build_codebook_chroma_weighting_pulls_toward_colour():
+    # 灰色 950 点と赤 50 点。1 色にまとめると、彩度重みで赤寄りになる
+    px = np.array([[50, 0, 0]] * 950 + [[50, 60, 0]] * 50, dtype=float)
+    plain = build_codebook(px, k=1, chroma_weighted=False)
+    weighted = build_codebook(px, k=1)
+    assert plain[0, 1] == pytest.approx(3, abs=0.1)
+    assert weighted[0, 1] > 20

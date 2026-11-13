@@ -60,4 +60,4 @@ Backups.backupdb
 MobileBackups.trash
 tmbootpicker.efi
 .superpowers/
-data/
+/data/

@@ -40,9 +40,19 @@ def lab_to_hex(lab: np.ndarray) -> str:
     return f"#{r:02x}{g:02x}{bl:02x}"
 
 
-def build_codebook(lab_samples: np.ndarray, k: int = 28, seed: int = 0) -> np.ndarray:
-    """k-means in Lab; returns (k,3) centres sorted by lightness."""
-    km = KMeans(n_clusters=k, random_state=seed, n_init=4).fit(lab_samples)
+def build_codebook(
+    lab_samples: np.ndarray, k: int = 28, seed: int = 0, chroma_weighted: bool = True
+) -> np.ndarray:
+    """k-means in Lab; returns (k,3) centres sorted by lightness.
+
+    Photochroms are mostly cream and ochre, so unweighted k-means spends almost every
+    centre on browns. Weighting samples by chroma gives the blues, greens and reds a centre.
+    """
+    weights = None
+    if chroma_weighted:
+        chroma = np.hypot(lab_samples[:, 1], lab_samples[:, 2])
+        weights = (0.1 + np.minimum(chroma, 40) / 40) ** 3
+    km = KMeans(n_clusters=k, random_state=seed, n_init=4).fit(lab_samples, sample_weight=weights)
     centres = km.cluster_centers_
     return centres[np.argsort(centres[:, 0], kind="stable")]
 
