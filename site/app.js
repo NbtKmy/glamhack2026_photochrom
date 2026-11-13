@@ -89,7 +89,13 @@ function refresh() {
   const total = state.bands.reduce((s, b) => s + b.n, 0);
   $("status").textContent = `${Math.round(total)} prints counted`;
   if (state.band && state.colour !== null && state.bands.some((b) => b.key === state.band)) selectLayer(state.band, state.colour);
-  else renderBands();
+  else {
+    // The selected band no longer exists (e.g. art reproductions were excluded): clear the panels.
+    Object.assign(state, { band: null, colour: null, image: null });
+    $("results").hidden = true;
+    $("detail").hidden = true;
+    renderBands();
+  }
 }
 
 async function main() {

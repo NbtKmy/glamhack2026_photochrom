@@ -1,6 +1,3 @@
-.suerpowers/
-
-
 # MacOS
 # General
 .DS_Store
@@ -60,5 +57,7 @@ Backups.backupdb
 MobileBackups.trash
 tmbootpicker.efi
 .superpowers/
-/data/
+/data/*
 .playwright-mcp/
+!/data/paintings-extra.csv
+__pycache__/

@@ -4,6 +4,7 @@ import numpy as np
 from PIL import Image
 
 _FALLBACK = (0.1, 0.1, 0.9, 0.9)
+_ROW_SHARE = 0.1  # share of non-backdrop pixels for a row/column to count as print
 
 
 def _runs(mask: np.ndarray, max_gap: int) -> list[tuple[int, int]]:
@@ -33,14 +34,16 @@ def crop_print(img: Image.Image) -> tuple[Image.Image, tuple[float, float, float
     fg = np.linalg.norm(a - background, axis=2) > 25
 
     # The print is the longest band of foreground rows/columns; the chart is a separate band
-    # (below or beside it) with only a narrow strip of backdrop in between.
+    # (below or beside it) with only a narrow strip of backdrop in between. A low share of
+    # foreground per row is enough: dark paintings and pale skies are close to the backdrop,
+    # while the strip between print and chart is pure backdrop.
     def longest(mask: np.ndarray) -> tuple[int, int]:
         return max(_runs(mask, max_gap=2), key=lambda r: r[1] - r[0], default=(0, 0))
 
-    y0, y1 = longest(fg.mean(axis=1) > 0.5)
-    x0, x1 = longest(fg[y0:y1].mean(axis=0) > 0.5) if y1 > y0 else (0, 0)
+    y0, y1 = longest(fg.mean(axis=1) > _ROW_SHARE)
+    x0, x1 = longest(fg[y0:y1].mean(axis=0) > _ROW_SHARE) if y1 > y0 else (0, 0)
     if x1 > x0:
-        y0, y1 = longest(fg[:, x0:x1].mean(axis=1) > 0.5)
+        y0, y1 = longest(fg[:, x0:x1].mean(axis=1) > _ROW_SHARE)
     if y1 - y0 < 0.2 * h or x1 - x0 < 0.2 * w:
         box = _FALLBACK
     else:

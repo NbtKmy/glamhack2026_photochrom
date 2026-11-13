@@ -41,3 +41,15 @@ def test_crop_print_vertical_chart_on_right():
     d.rectangle((300, 0, 339, 399), fill=(170, 150, 100))
     out, box = crop_print(img)
     assert box == pytest.approx((10 / 340, 15 / 400, 291 / 340, 386 / 400), abs=0.02)
+
+
+def test_crop_print_keeps_parts_of_print_close_to_backdrop():
+    # 暗い絵画: プリント上部の大半が背景グレーに近く、一部だけ明るい（レビュー指摘）
+    img = Image.new("RGB", (400, 340), (58, 58, 58))
+    d = ImageDraw.Draw(img)
+    d.rectangle((20, 10, 380, 250), fill=(62, 60, 58))      # 背景に近い暗いプリント
+    d.rectangle((20, 10, 120, 250), fill=(150, 120, 90))    # 一部だけ明るい人物
+    d.rectangle((20, 130, 380, 250), fill=(120, 160, 200))  # 下半分は明るい
+    d.rectangle((40, 270, 360, 320), fill=(220, 220, 220))  # チャート
+    out, box = crop_print(img)
+    assert box == pytest.approx((20 / 400, 10 / 340, 381 / 400, 251 / 340), abs=0.02)
