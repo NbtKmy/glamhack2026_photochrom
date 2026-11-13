@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Photochrom vs Painting</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Photochrom vs Painting</h1>
+    <p class="lede">Art reproductions laid over the paintings they copy. Drag to move the photochrom, Shift+drag to rotate, scroll to zoom, then fade it with the slider to see how the colours changed.</p>
+    <nav><a href="index.html">← Colour bands by year</a></nav>
+  </header>
+
+  <main class="compare">
+    <aside id="list" class="list" aria-label="Art reproductions"></aside>
+
+    <section>
+      <div id="stage" class="stage">
+        <img id="painting" alt="">
+        <img id="overlay" alt="">
+      </div>
+      <div class="stage-tools">
+        <label>Photochrom opacity <input type="range" id="opacity" min="0" max="100" value="50"></label>
+        <label>Rotate <input type="range" id="rotate" min="-20" max="20" step="0.1" value="0"></label>
+        <label>Scale <input type="range" id="scale" min="0.5" max="2" step="0.005" value="1"></label>
+        <label><input type="checkbox" id="difference"> Difference blend</label>
+        <button id="reset" type="button">Reset</button>
+      </div>
+      <div id="meta"></div>
+      <div class="compare-palettes">
+        <span>Photochrom</span><div id="palPhotochrom" class="palette"></div>
+        <span>Painting</span><div id="palPainting" class="palette"></div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="compare.js"></script>
+</body>
+</html>
